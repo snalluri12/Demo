@@ -1,7 +1,7 @@
 
-# Veeva Vault POC – Order & Shipment Automation for a Customer
+# Order & Shipment Automation for QuickTrack 
 
-## 📌 Project Overview
+## Project Overview
 
 This proof of concept demonstrates an end-to-end solution in Veeva Vault where:
 - Creating a new `Order__c` record linked to `Customer__c` automatically triggers creation of a linked `Shipment__c` record via Vault Java SDK.
@@ -10,21 +10,16 @@ This proof of concept demonstrates an end-to-end solution in Veeva Vault where:
 
 ---
 
-## 🛠️ Object Relationships
+## Object Relationships
+<br>
 
-![Entity Relationship Diagram](veeva_vault_entity_relationship_diagram.png)
+![Entity Relationship Diagram](./Object-Entity%20Diagram.png)
 
-```
-Customer__c
-   ↑
-Order__c (Reference: customer__c)
-   ↓
-Shipment__c (Reference: order__c)
-```
+<br>
 
 ---
 
-## ⚙️ Trigger Configuration
+## Trigger Configuration
 
 **Trigger Class:** `OrderShipmentTrigger.java`  
 **Trigger Event:** `AFTER_INSERT` on `Order__c`
@@ -39,72 +34,88 @@ Shipment__c (Reference: order__c)
 
 ---
 
-## 🧪 API Usage (Postman)
+## API Usage (Postman and curl)
 
-To simulate external system integration, Orders are created via the Vault REST API using Postman.
+Customers and Orders are created via the Vault REST API using Postman.
 
-### Sample Request:
+### Sample Request (one insert):
 ```
-POST /api/v20.3/objects/order__c
+POST /api/v25.1/vobjects/order__c
 Headers:
-Authorization: Bearer {{token}}
+Authorization: {session ID}
 Content-Type: application/json
+X-VaultAPI-MigrationMode: true
+Accept: application/json
 
-Body:
-{
-  "name__v": "Quick Track",
-  "customer__c": "CUSTOMER_RECORD_ID"
-}
+Body (x-www-form-urlencoded):
+name__v: Order 1
+customer__c: VEM000000003001
+status__v: active__v
+order_name__c: Quick Track Supplies
+
 ```
 
-> See `postman/` folder for sample collection and environment.
+### Sample Request (bulk insert):
+```
+curl -X POST -H "Authorization: {sessionID}" \
+-H "Content-Type: text/csv" \
+-H "Accept: text/csv" \
+--data-binary @"../order_import_sample.csv" \
+https://vaultsystemintegration-candidate-exercise-srinija.veevavault.com/api/v25.1/vobjects/order__c
+
+```
+
+
+Go to this [link](https://srinija-s-team.postman.co/workspace/adeba121-c4d0-4820-8813-443cc794c9f7/request/46722228-857bfea0-104f-43ea-be07-88ae2ed12bf2?tab=body) for sample collection and environment.
 
 ---
 
-## 📊 Report Configuration
+## Report Configuration
 
-**Report Type:** Custom  
+**Report Type:** Custom Report: Order with Customer and Shipment
 **Primary Object:** `Order__c`  
 **Related Objects:**
 - `Customer__c` (via lookup)
 - `Shipment__c` (child relationship)
 
 ### Fields Included:
+- `Order__c.name__v`
+- `Order__c.order_name__c`
+- `Order__c.status__v`
 - `Customer__c.name__v`
-- `Order__c.id`
-- `Order__c.order_date__c`
-- `Shipment__c.status__c`
+- `Shipment__c.name__v`
+- `Shipment__c.date__c`
 - `Shipment__c.shipment_tracking_number__c`
+- `Shipment__c.address`
 
-### Optional Filters:
-- Shipment Status = e.g., “In Transit”
+[See Report](https://vaultsystemintegration-candidate-exercise-srinija.veevavault.com/ui/#reporting/viewer/0RP00000000A001)
+
+### Filter:
 - Order Date Range
 
 ---
 
-## 📂 File Structure
+## File Structure
 
 ```
+README.md
 /src/
   OrderShipmentTrigger.java
-/postman/
-  Order_Create.json
-/report/
-  Orders_with_Shipments_and_Customers_Report_Screenshot.png
-README.md
+
+
 ```
 
 ---
 
 ## 🔍 Known Limitations / Open Points
 
-- `address__c` on `Shipment__c` must always be set; logic currently defaults only for `"Quick Track"` orders.
-- Future iterations could support multiple shipments per order.
-- `Shipment Status` could be converted to a picklist with controlled lifecycle values.
+- `address__c` on `Shipment__c` must always be set; logic currently defaults only for `"Quick Track"` orders and is not conditional based on customer 
+- Future iterations could support having the shipment tracking number as a lookup field on the order. Once the shipment is created, the order field should be set. This makes   the shipments more accessible through the order. 
+- `Shipment Status` could be configured as a custom picklist so that there is more values than "Active" or "Inactive" (eg. "Pending", "Shipping")
 
 ---
 
-## ✅ How to Run / Test
+## How to Run / Test
 
 1. Use Postman to create a new `Order__c` record.
 2. Confirm that a `Shipment__c` is created via the SDK trigger.
@@ -112,8 +123,6 @@ README.md
 
 ---
 
-## 👥 Handoff Notes
+## Handoff Notes
 
 This README, Java trigger code, Postman collection, and screenshots can be used by any Vault developer or administrator to reproduce, extend, or maintain the current setup.
-
-For questions or suggested improvements, please contact [Your Name].
