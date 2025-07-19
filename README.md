@@ -1,5 +1,5 @@
 
-# Order & Shipment Automation for QuickTrack 
+# Order and Shipment Automation for QuickTrack 
 
 ## Project Overview
 
@@ -100,8 +100,10 @@ Go to this [link](https://srinija-s-team.postman.co/workspace/adeba121-c4d0-4820
 ```
 README.md
 /src/
-  OrderShipmentTrigger.java
-
+  orders.py
+  order_import_sample.csv
+/Trigger/
+  Trigger/javasdk/src/main/java/com/veeva/vault/custom/triggers/OrderShipmentrigger.java
 
 ```
 
