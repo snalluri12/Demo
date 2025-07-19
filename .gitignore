@@ -1,0 +1,15 @@
+# Python environment
+venv/
+__pycache__/
+*.pyc
+
+# Sensitive files
+.env
+
+# macOS system files
+.DS_Store
+
+# Vault or IDE metadata (if applicable)
+*.iml
+.idea/
+
