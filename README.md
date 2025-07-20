@@ -43,7 +43,7 @@ Customers and Orders are created via the Vault REST API using Postman.
 POST /api/v25.1/vobjects/order__c
 Headers:
 Authorization: {session ID}
-Content-Type: application/json
+Content-Type: application/x-www-form-urlencoded
 X-VaultAPI-MigrationMode: true
 Accept: application/json
 
