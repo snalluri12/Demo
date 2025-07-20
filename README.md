@@ -72,8 +72,8 @@ Go to this [link](https://srinija-s-team.postman.co/workspace/adeba121-c4d0-4820
 
 ## Report Configuration
 
-**Report Type:** 
-- Order with Customer and Shipment
+**Report Type:** Order with Customer and Shipment
+
 **Primary Object:** `Order__c`  
 **Related Objects:**
 - `Customer__c` (via lookup)
